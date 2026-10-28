@@ -1,0 +1,29 @@
+# wiskundemetaaf.nl deelt de database van afgeleideoefenen.nl. Migraties komen
+# daarom alleen uit de repo AafVos/AfgeleideOefenen (de Ontwikkelaar (Pro) daar).
+# Deze controle houdt een pull request tegen die hier iets in supabase/migrations/
+# toevoegt of verandert. De map zelf blijft staan: de e2e-tests bouwen er de
+# lokale testdatabase mee op. Werk hem bij door hem over te nemen uit afgeleide.
+name: Geen eigen migraties
+
+on: pull_request
+
+jobs:
+  geen-migraties:
+    name: Geen eigen migraties
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Kijk of de pull request migraties verandert
+        env:
+          BASIS: ${{ github.event.pull_request.base.sha }}
+          TITEL: ${{ github.event.pull_request.title }}
+        run: |
+          veranderd=$(git diff --name-only "$BASIS"...HEAD -- supabase/migrations/ || true)
+          if [ -z "$veranderd" ]; then echo "Geen migraties veranderd."; exit 0; fi
+          case "$TITEL" in *"migraties overnemen uit afgeleide"*) echo "Overname uit afgeleide: toegestaan."; exit 0;; esac
+          echo "::error::Deze pull request verandert supabase/migrations/. Dat mag hier niet: de database wordt gedeeld met afgeleideoefenen.nl en migraties komen alleen uit AafVos/AfgeleideOefenen. Vraag de migratie aan bij de Ontwikkelaar (Pro) van afgeleide. (Alleen een pull request met 'migraties overnemen uit afgeleide' in de titel mag de map bijwerken.)"
+          echo "$veranderd"
+          exit 1

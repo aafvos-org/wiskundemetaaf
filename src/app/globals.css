@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f7f6f3;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0efe9;
+  --color-border: #e4e2d9;
+  --color-text: #1a1a18;
+  --color-text-muted: #716c68;
+  --color-accent: #2d6a4f;
+  --color-accent-light: #e8f5ee;
+  --color-accent-2: #be444a;
+  --color-accent-2-light: #fbeeed;
+  --color-warn: #92400e;
+
+  --font-serif: var(--font-dm-serif), "Times New Roman", serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+/* Gestaggerde puntjes bij „nakijken met AI” op de PracticeCard */
+@keyframes practice-check-dot {
+  0%,
+  70%,
+  100% {
+    opacity: 0.22;
+    transform: translateY(0);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+.practice-check-dots span {
+  animation: practice-check-dot 1.05s ease-in-out infinite;
+}
+.practice-check-dots span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.practice-check-dots span:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+/* Vieringsmoment: een soort som springt naar "beheerst" (AFG-485). Eenmalige
+   rand die even oplicht en wegdooft, geen doorlopende animatie. */
+@keyframes mastered-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgba(45, 106, 79, 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(45, 106, 79, 0);
+  }
+}
+.animate-mastered-flash {
+  animation: mastered-flash 0.5s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-mastered-flash {
+    animation: none;
+  }
+}
+
+/* Subtiele scrollbar voor interne scroll-panelen (o.a. opgaven-navigator) */
+.nice-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+.nice-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.nice-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.nice-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 9999px;
+}
+.nice-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* ── Welkomst-rondleiding (Inti) ─────────────────────────────────── */
+@keyframes tour-wave {
+  0%, 55%, 100% { transform: rotate(0deg); }
+  65% { transform: rotate(-32deg); }
+  75% { transform: rotate(-8deg); }
+  85% { transform: rotate(-32deg); }
+}
+@keyframes tour-blink {
+  0%, 93%, 100% { transform: scaleY(1); }
+  95.5% { transform: scaleY(0.08); }
+}
+@keyframes tour-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.tour-arm-wave { transform-origin: 47px 72px; animation: tour-wave 1.6s ease-in-out infinite; }
+.tour-eyes { transform-origin: 52px 38px; animation: tour-blink 4.2s infinite; }
+.tour-inner { animation: tour-bob 3.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .tour-arm-wave, .tour-eyes, .tour-inner { animation: none; }
+}
+
+/* Ring om het uitgelichte element tijdens de rondleiding. De z-index tilt
+   het element boven de dimmende overlay (z-20) uit, anders verdwijnt een
+   knop die niet in de header staat onder die overlay. */
+.tour-ring {
+  position: relative;
+  z-index: 21;
+  border-radius: 10px;
+  background: var(--color-accent-light);
+  box-shadow: 0 0 0 3px var(--color-accent);
+}
+
+/* De MathML-versie is er voor de schermlezer. KaTeX verstopt hem al, maar
+   op een telefoon kan die verborgen formule de pagina toch breder maken
+   dan het scherm. Deze extra afscherming houdt hem binnen de formule. */
+.katex .katex-mathml {
+  clip-path: inset(50%);
+  contain: paint;
+}
+
+/* De oefenpagina heeft haar eigen scrollgebied (`[data-oefen-volledig]` in
+   oefenen-client.tsx) en toont de voettekst daar zelf aan het eind van de
+   lijst sommen. Zonder deze regel zou de voettekst van `(paginas)/layout.tsx`
+   daar nog een keer bovenop staan, als vaste balk die juist de ruimte
+   wegneemt die AFG-595 aan de opgave wilde teruggeven. */
+main:has([data-oefen-volledig]) .site-footer-mobiel {
+  display: none;
+}

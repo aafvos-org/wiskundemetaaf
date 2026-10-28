@@ -1,0 +1,179 @@
+'use client'
+
+import { useActionState, useState, useTransition } from 'react'
+import { useFormStatus } from 'react-dom'
+import { useTranslations } from 'next-intl'
+
+import { GoogleKnop } from '@/components/google-knop'
+import { ErrorBanner } from '@/components/ui'
+
+import { loginAction, resendConfirmationAction, type LoginState } from './actions'
+
+const initialState: LoginState = { errorKey: null }
+
+export function LoginForm({
+  callbackError,
+  oefenpad = null,
+  googleAan = false,
+}: {
+  callbackError?: string | null
+  oefenpad?: string | null
+  googleAan?: boolean
+}) {
+  const [state, formAction] = useActionState(loginAction, initialState)
+  const t = useTranslations('Login')
+  const [showPassword, setShowPassword] = useState(false)
+  const [resendPending, startResend] = useTransition()
+  const [resendResult, setResendResult] = useState<'nog-niet' | 'gelukt' | 'mislukt'>('nog-niet')
+
+  function handleResend() {
+    if (!state.unconfirmedEmail) return
+    startResend(async () => {
+      // Supabase weigert de mail bijvoorbeeld als er te snel achter elkaar om
+      // gevraagd wordt. Alleen "verstuurd" tonen als er écht niets misging; de
+      // Engelse tekst van Supabase zelf hoort niet op het scherm.
+      const { ok } = await resendConfirmationAction(state.unconfirmedEmail!, oefenpad ?? undefined)
+      setResendResult(ok ? 'gelukt' : 'mislukt')
+    })
+  }
+
+  return (
+    <div className="space-y-4">
+      {googleAan ? <GoogleKnop oefenpad={oefenpad} /> : null}
+      <form action={formAction} className="space-y-4" noValidate>
+      {oefenpad ? <input type="hidden" name="naar" defaultValue={oefenpad} /> : null}
+      <Field
+        label={t('emailLabel')}
+        name="email"
+        type="email"
+        autoComplete="email"
+        required
+        defaultValue={state.values?.email}
+      />
+      <PasswordField
+        label={t('passwordLabel')}
+        name="password"
+        autoComplete="current-password"
+        required
+        showPassword={showPassword}
+        onToggle={() => setShowPassword((prev) => !prev)}
+        toggleLabel={showPassword ? t('hidePassword') : t('showPassword')}
+      />
+
+      {(callbackError || state.errorKey) && (
+        <ErrorBanner>{callbackError ?? t(state.errorKey!)}</ErrorBanner>
+      )}
+
+      {state.unconfirmedEmail && (
+        <div className="space-y-1 rounded-md border border-border bg-surface-2 px-3 py-2 text-sm text-text-muted">
+          {resendResult === 'gelukt' ? (
+            <p role="status">{t('resendSuccess')}</p>
+          ) : (
+            <>
+              {resendResult === 'mislukt' && (
+                <p role="alert" className="text-accent-2">
+                  {t('resendError')}
+                </p>
+              )}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resendPending}
+                className="font-medium text-accent hover:underline disabled:opacity-60"
+              >
+                {resendPending ? t('resendPending') : t('resendButton')}
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      <SubmitButton />
+      </form>
+    </div>
+  )
+}
+
+function Field({
+  label,
+  name,
+  type,
+  autoComplete,
+  required,
+  defaultValue,
+}: {
+  label: string
+  name: string
+  type: string
+  autoComplete?: string
+  required?: boolean
+  defaultValue?: string
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-sm font-medium text-text">{label}</span>
+      <input
+        name={name}
+        type={type}
+        autoComplete={autoComplete}
+        required={required}
+        defaultValue={defaultValue}
+        className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+      />
+    </label>
+  )
+}
+
+function PasswordField({
+  label,
+  name,
+  autoComplete,
+  required,
+  showPassword,
+  onToggle,
+  toggleLabel,
+}: {
+  label: string
+  name: string
+  autoComplete?: string
+  required?: boolean
+  showPassword: boolean
+  onToggle: () => void
+  toggleLabel: string
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-sm font-medium text-text">{label}</span>
+      <div className="flex items-center gap-2">
+        <input
+          name={name}
+          type={showPassword ? 'text' : 'password'}
+          autoComplete={autoComplete}
+          required={required}
+          className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/20"
+        />
+        <button
+          type="button"
+          onClick={onToggle}
+          className="inline-flex min-h-11 shrink-0 items-center rounded-md border border-border px-3 text-xs font-medium text-text-muted hover:bg-surface-2 hover:text-text"
+        >
+          {toggleLabel}
+        </button>
+      </div>
+    </label>
+  )
+}
+
+function SubmitButton() {
+  const { pending } = useFormStatus()
+  const t = useTranslations('Login')
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="w-full rounded-md bg-accent px-4 py-2.5 font-medium text-white shadow-sm transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {pending ? t('submitPending') : t('submitLabel')}
+    </button>
+  )
+}

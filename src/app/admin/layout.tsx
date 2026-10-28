@@ -1,0 +1,76 @@
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+
+import { SITE_CONFIG } from '@/config/site'
+import { routing } from '@/i18n/routing'
+import { createClient } from '@/lib/supabase/server'
+
+// Het beheergedeelte staat buiten `src/app/[locale]`, dus de taalcode moet
+// er hier zelf bij. Zonder die code stuurt `src/middleware.ts` de bezoeker alsnog
+// door, maar dat is een extra sprong die niemand nodig heeft.
+const TAAL = routing.defaultLocale
+
+export const metadata = {
+  title: `Admin · ${SITE_CONFIG.domain}`,
+}
+
+const NAV = [
+  { href: '/admin', label: 'Overzicht' },
+  { href: '/admin/topics', label: 'Topics' },
+  { href: '/admin/questions', label: 'Vragen' },
+  { href: '/admin/flags', label: 'Flags' },
+  { href: '/admin/users', label: 'Gebruikers' },
+  { href: '/admin/video-aanvragen', label: 'Video-aanvragen' },
+]
+
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) redirect(`/${TAAL}/inloggen`)
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (profile?.role !== 'admin') redirect(`/${TAAL}`)
+
+  // `w-full` is geen overbodige regel: `body` is een flexkolom en door
+  // `mx-auto` krimpt dit blok anders niet mee met een smal scherm, maar groeit
+  // het met zijn inhoud mee. De hele pagina schuift dan opzij in plaats van
+  // alleen een brede tabel.
+  return (
+    <div className="mx-auto w-full max-w-6xl px-4 py-8">
+      <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wider text-accent">
+            Admin
+          </p>
+          <h1 className="font-serif text-2xl text-text">Beheer</h1>
+        </div>
+      </div>
+
+      <nav className="mb-6 flex flex-wrap gap-1 rounded-xl border border-border bg-surface p-1">
+        {NAV.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="rounded-md px-3 py-1.5 text-sm text-text-muted hover:bg-surface-2 hover:text-text"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      {children}
+    </div>
+  )
+}

@@ -1,0 +1,75 @@
+import Link from 'next/link'
+
+import { seintjeOntbreekt } from '@/lib/omgeving/worker-variabelen'
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
+import { Card } from '@/components/ui'
+
+export default async function AdminDashboardPage() {
+  const supabase = await createClient()
+  const admin = createServiceRoleClient()
+
+  const [topics, clusters, questions, aiQuestions] = await Promise.all([
+    supabase.from('topics_new').select('*', { count: 'exact', head: true }),
+    supabase.from('topic_clusters_new').select('*', { count: 'exact', head: true }),
+    supabase.from('questions_new').select('*', { count: 'exact', head: true }),
+    supabase
+      .from('questions_new')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_ai_generated', true),
+  ])
+
+  const [profileCount, sessionCount, answerCount] = await Promise.all([
+    admin.from('profiles').select('*', { count: 'exact', head: true }),
+    admin.from('user_sessions_new').select('*', { count: 'exact', head: true }),
+    admin.from('session_answers_new').select('*', { count: 'exact', head: true }),
+  ])
+
+  const stats: Array<{ label: string; value: number | null; href?: string }> = [
+    { label: 'Topics', value: topics.count, href: '/admin/topics' },
+    { label: 'Clusters', value: clusters.count, href: '/admin/topics' },
+    { label: 'Vragen totaal', value: questions.count, href: '/admin/questions' },
+    { label: 'AI-gegenereerde vragen', value: aiQuestions.count },
+    { label: 'Gebruikers', value: profileCount.count, href: '/admin/users' },
+    { label: 'Oefensessies', value: sessionCount.count },
+    { label: 'Antwoorden totaal', value: answerCount.count },
+  ]
+
+  const seintjeMist = seintjeOntbreekt()
+
+  return (
+    <div>
+      {seintjeMist.length > 0 && (
+        <p className="mb-4 rounded-lg border border-amber-700/40 bg-amber-50 px-4 py-3 text-sm text-text">
+          Het seintje bij een nieuwe gebruiker gaat er niet uit. Deze namen
+          ontbreken: {seintjeMist.join(', ')}.
+        </p>
+      )}
+      <h2 className="mb-4 font-serif text-xl text-text">Statistieken</h2>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((s) => {
+          const content = (
+            <Card className="h-full">
+              <p className="text-xs uppercase tracking-wider text-text-muted">
+                {s.label}
+              </p>
+              <p className="mt-1 font-serif text-3xl text-text">
+                {s.value ?? '—'}
+              </p>
+            </Card>
+          )
+          return s.href ? (
+            <Link
+              key={s.label}
+              href={s.href}
+              className="block transition hover:-translate-y-0.5"
+            >
+              {content}
+            </Link>
+          ) : (
+            <div key={s.label}>{content}</div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}

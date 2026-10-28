@@ -1,0 +1,79 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# playwright (uitslagen en opnames van de e2e-tests)
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# macOS-kopieën ("Beide bewaren" maakt "naam 2.tsx") — geen enkel echt bestand
+# in deze repo heeft een spatie in de naam, dus dit raakt alleen die kopieën
+* 2.*
+
+# azurite (lokaal testhulpje, hoort niet in de repo)
+__azurite_db*.json
+
+# claude code (lokale instellingen met paden van deze computer)
+.claude/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.local.example
+!.env.example
+
+# vercel
+.vercel
+
+# supabase cli
+supabase/.temp/
+supabase/.branches/
+
+# local migration tooling / data (CSVs + scripts)
+/files/
+
+# boek-brontranscripties (auteursrecht Noordhoff) — lokaal, niet in versiebeheer/build
+/content-bron/
+/getal-en-ruimte-*.pdf
+/uit-getal-en-ruimte-*.pdf
+# examen-PDF's (bronmateriaal) — lokaal
+/vw-*.pdf
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Cloudflare / OpenNext
+/.open-next/
+/.wrangler/
+.dev.vars*
+!.dev.vars.example

@@ -1,0 +1,88 @@
+/**
+ * Prompt-templates voor de AI-laag.
+ */
+
+import { SITE_CONFIG } from '@/config/site'
+import { isVerhaaltje } from '@/lib/practice/answer-prefix'
+
+/**
+ * Kale som: "Bepaal de afgeleide van f(x) = …".
+ * Verhaaltje: de tekst zelf, inclusief de vraagzin. Anders keurt de
+ * controle een afgeleide goed terwijl er een tijdstip of hoogte gevraagd wordt.
+ */
+function opdrachtVoorControle(questionBody: string): string {
+  if (isVerhaaltje(questionBody)) return questionBody.trim()
+  return `${SITE_CONFIG.taskPromptNl} ${questionBody}`
+}
+
+export function buildCheckAnswerPromptNew(input: {
+  questionBody: string
+  correctAnswer: string
+  studentAnswer: string
+  topicTitle: string
+  clusterTitle: string
+  stepsAlreadyExist: boolean
+}): string {
+  return `Je bent een wiskundedocent voor VWO-leerlingen die leren ${SITE_CONFIG.subjectVerbNl}.
+De site gebruikt de notatie van Getal & Ruimte.
+Noem functies ALTIJD $f$, $g$ of $h$: de hele functie is $f$, de buitenste functie is $g$ en de binnenste is $h$. Schrijf de kettingregel als $f(x) = g(h(x))$.
+Gebruik nooit $u$ of $v$ als functienaam.
+Antwoord ALTIJD in het Nederlands en ALLEEN met geldige JSON (geen Markdown, geen uitleg erbuiten).
+Zet wiskunde tussen $...$ en escape elke backslash in de JSON (schrijf \\\\sin, \\\\frac enzovoort, nooit \\sin).
+
+Context:
+- Topic: ${input.topicTitle}
+- Cluster: ${input.clusterTitle}
+- Vraag: ${opdrachtVoorControle(input.questionBody)}
+- Correct antwoord: ${input.correctAnswer}
+- Antwoord van de leerling: ${input.studentAnswer}
+
+=== STAP 1: IS HET WISKUNDIG EQUIVALENT? ===
+Bereken of het antwoord van de leerling wiskundig EXACT hetzelfde resultaat geeft als het correcte antwoord.
+Vereenvoudig beide uitdrukkingen volledig en vergelijk.
+
+Voorbeelden van EQUIVALENTE antwoorden (is_mathematically_correct = true):
+- Student: "3*(2x+1)^2*2"  →  Correct: "6(2x+1)^2"  →  3·2·(2x+1)^2 = 6(2x+1)^2  ✓ EQUIVALENT
+- Student: "2*(3x+2)*3"    →  Correct: "6(3x+2)"     →  2·3·(3x+2) = 6(3x+2)       ✓ EQUIVALENT
+- Student: "4*x^3"         →  Correct: "4x^3"         →  identiek                    ✓ EQUIVALENT
+
+Voorbeelden van NIET-equivalente antwoorden (is_mathematically_correct = false):
+- Student: "3*(2x+1)*2"    →  Correct: "6(2x+1)^2"  →  6(2x+1) ≠ 6(2x+1)^2        ✗ FOUT (exponent ontbreekt)
+- Student: "7x^2"          →  Correct: "21x^2"       →  7 ≠ 21                       ✗ FOUT
+
+Behandel een overduidelijke tik- of spelfout ook als EQUIVALENT, zolang de wiskundige
+bedoeling ondubbelzinnig overeenkomt met het correcte antwoord:
+- Student: "coss(3x)*3"  →  Correct: "3cos(3x)"  →  dubbele s is duidelijk een tikfout van cos  ✓ EQUIVALENT
+- Student: "2 sinx"      →  Correct: "2sin(x)"    →  haakjes vergeten, bedoeling ondubbelzinnig  ✓ EQUIVALENT
+Maar alléén als er geen andere wiskundige interpretatie mogelijk is; een andere functienaam,
+variabele of ontbrekende term is GEEN tikfout (bijv. "tan" i.p.v. "sin" is gewoon fout).
+
+Als is_mathematically_correct = true: stel alleen is_mathematically_correct=true in, laat de andere velden LEEG ("" / []), en stop.
+
+=== STAP 2 (alleen als het echt fout is) ===
+1. Bepaal de categorie van de fout in max 4 woorden Nederlands (bijv. "kettingregel vergeten", "exponent fout", "constante factor weggelaten").
+2. Schrijf een uitleg in max 3 zinnen die CONCREET laat zien wat er misging:
+   a. Benoem de specifieke stap die fout ging.
+   b. Laat de foute berekening zien met de getallen van deze vraag.
+   c. Laat de juiste berekening zien.
+   Gebruik Nederlandse tekst met wiskundige uitdrukkingen tussen $...$ (inline LaTeX). Vriendelijk, geen aanhef.
+${input.stepsAlreadyExist
+  ? '3. Er is al een stappenplan voor deze vraag — laat solution_steps LEEG ([]).'
+  : `3. Schrijf een STAPPENPLAN voor deze specifieke vraag: 3 à 4 stappen. Gebruik dit exacte formaat:
+   - Elke stap is 1 zin: Nederlandse instructie gevolgd door de wiskunde tussen $...$ (inline LaTeX).
+   - Voorbeeld stap: "Binnenste functie: $h(x) = 2x+1$, dus $h'(x) = 2$."
+   - Voorbeeld stap: "Kettingregel: $f(x) = \\sqrt{h(x)}$, dus $f'(x) = \\frac{h'(x)}{2\\sqrt{h(x)}} = \\frac{2}{2\\sqrt{2x+1}} = \\frac{1}{\\sqrt{2x+1}}$."
+   Gebruik ALTIJD $...$ rond wiskunde, nooit kale tekst-notatie zoals x^2 of f'(x) buiten dollartekens.`}
+
+Antwoord UITSLUITEND met dit JSON-schema:
+{
+  "is_mathematically_correct": boolean,
+  "category": "string (max 4 woorden NL, leeg als is_mathematically_correct=true)",
+  "error_explanation": "string (leeg als is_mathematically_correct=true, anders max 3 zinnen NL)",
+  "solution_steps": [
+    "string (stap 1, concreet met getallen van DEZE vraag)",
+    "string (stap 2)",
+    "..."
+  ]
+}`
+}

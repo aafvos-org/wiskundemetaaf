@@ -1,0 +1,139 @@
+import Link from 'next/link'
+
+import { createClient } from '@/lib/supabase/server'
+import { Button, Card, Input } from '@/components/ui'
+
+import { createTopic } from './actions'
+
+type TopicRow = {
+  id: string
+  slug: string
+  title: string
+  chapter_id: string
+  order_index: number
+  topic_clusters_new: Array<{ count: number }>
+}
+
+export default async function TopicsPage() {
+  const supabase = await createClient()
+
+  const [{ data: topics }, { data: chapters }] = await Promise.all([
+    supabase
+      .from('topics_new')
+      .select(
+        'id, slug, title, chapter_id, order_index, topic_clusters_new(count)',
+      )
+      .order('order_index', { ascending: true })
+      .returns<TopicRow[]>(),
+    supabase
+      .from('chapters')
+      .select('id, slug, title, order_index')
+      .order('order_index'),
+  ])
+
+  const chapterById = new Map((chapters ?? []).map((c) => [c.id, c]))
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-serif text-xl text-text">Topics</h2>
+        <p className="text-sm text-text-muted">
+          De hoofdonderwerpen van de leerlijn. Clusters beheer je vanuit de
+          detailpagina.
+        </p>
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-border bg-surface">
+        <table className="w-full text-sm">
+          <thead className="bg-surface-2 text-left text-xs uppercase tracking-wider text-text-muted">
+            <tr>
+              <th className="px-4 py-2 font-medium">#</th>
+              <th className="px-4 py-2 font-medium">Titel</th>
+              <th className="px-4 py-2 font-medium">Hoofdstuk</th>
+              <th className="px-4 py-2 font-medium">Slug</th>
+              <th className="px-4 py-2 font-medium">Clusters</th>
+              <th className="px-4 py-2" />
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {topics?.map((t) => (
+              <tr key={t.id}>
+                <td className="px-4 py-2 text-text-muted">{t.order_index}</td>
+                <td className="px-4 py-2 font-medium">{t.title}</td>
+                <td className="px-4 py-2 text-text-muted">
+                  {chapterById.get(t.chapter_id)?.slug ?? '—'}
+                </td>
+                <td className="px-4 py-2 font-mono text-xs text-text-muted">
+                  {t.slug}
+                </td>
+                <td className="px-4 py-2">
+                  {t.topic_clusters_new?.[0]?.count ?? 0}
+                </td>
+                <td className="px-4 py-2 text-right">
+                  <Link
+                    href={`/admin/topics/${t.id}`}
+                    className="text-accent hover:underline"
+                  >
+                    Bewerken →
+                  </Link>
+                </td>
+              </tr>
+            ))}
+            {!topics?.length && (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="px-4 py-8 text-center text-text-muted"
+                >
+                  Nog geen topics. Voeg er hieronder een toe.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <Card>
+        <h3 className="mb-4 font-serif text-lg text-text">Nieuw topic</h3>
+        <form action={createTopic} className="grid gap-3 sm:grid-cols-2">
+          <Input name="title" label="Titel" required placeholder="De productregel" />
+          <Input
+            name="slug"
+            label="Slug"
+            required
+            pattern="[a-z0-9_-]+"
+            placeholder="h4_productregel"
+            hint="Kleine letters, cijfers, - of _"
+          />
+          <div>
+            <label className="mb-1 block text-sm font-medium text-text">
+              Hoofdstuk
+            </label>
+            <select
+              name="chapter_id"
+              required
+              className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm"
+            >
+              <option value="">Kies hoofdstuk…</option>
+              {chapters?.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.slug} — {c.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Input
+            name="order_index"
+            label="Volgorde"
+            type="number"
+            defaultValue={99}
+            min={0}
+          />
+          <div className="sm:col-span-2">
+            <Button type="submit">Toevoegen</Button>
+          </div>
+        </form>
+      </Card>
+    </div>
+  )
+}
