@@ -14,8 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node scripts/e2e.mjs",
-    "cf:build": "NEXT_PUBLIC_SITE_VARIANT=wiskundemetaaf opennextjs-cloudflare build && node scripts/statische-cache.mjs",
-    "cf:preview": "NEXT_PUBLIC_SITE_VARIANT=wiskundemetaaf opennextjs-cloudflare build && NEXT_PUBLIC_SITE_VARIANT=wiskundemetaaf opennextjs-cloudflare preview",
+    "cf:build": "sh scripts/openbare-bouwwaarden.sh sh -c 'opennextjs-cloudflare build && node scripts/statische-cache.mjs'",
+    "cf:preview": "sh scripts/openbare-bouwwaarden.sh sh -c 'opennextjs-cloudflare build && opennextjs-cloudflare preview'",
     "postinstall": "node scripts/koppel-bouw.mjs"
   },
   "dependencies": {

@@ -396,7 +396,7 @@ teksten verschillen.
 | Naam in de kop | AfgeleideOefenen**.nl** | Wiskunde met **Aaf** |
 | Startpagina | differentiëren per onderwerp | het centraal examen |
 | Worker | `afgeleide-oefenen` | `wiskundemetaaf` |
-| Wrangler-config | `wrangler.jsonc` | `wrangler.wiskundemetaaf.jsonc` |
+| Repo | `AafVos/AfgeleideOefenen` | `aafvos-org/wiskundemetaaf` |
 
 Welke van de twee er gebouwd wordt, zegt `NEXT_PUBLIC_SITE_VARIANT` bij de
 bouw. Staat die variabele er niet, dan is het `afgeleide` — een bestaande bouw
@@ -410,15 +410,14 @@ npm run dev:wiskundemetaaf           # gewone ontwikkelserver
 npm run cf:preview:wiskundemetaaf    # dezelfde code in de Workers-omgeving
 ```
 
-De tweede worker wordt uit dezelfde repo gebouwd, met een eigen
-wrangler-config en één extra bouwvariabele. In Workers Builds staat bij de
-worker `wiskundemetaaf`:
+De worker `wiskundemetaaf` wordt uit deze repo gebouwd, met gewoon
+`wrangler.jsonc`. In Workers Builds staat:
 
-* **Build command:** `npx opennextjs-cloudflare build -c wrangler.wiskundemetaaf.jsonc`
-* **Deploy command:** `npx wrangler deploy -c wrangler.wiskundemetaaf.jsonc`
-* **Build variables:** dezelfde `NEXT_PUBLIC_*` als bij `afgeleide-oefenen`,
-  maar met `NEXT_PUBLIC_SITE_URL=https://www.wiskundemetaaf.nl` en
-  `NEXT_PUBLIC_SITE_VARIANT=wiskundemetaaf`.
+* **Build command:** `npm run cf:build`
+* **Deploy command:** `npx wrangler deploy`
+* **Build variables:** geen nodig. `scripts/openbare-bouwwaarden.sh` zet de
+  openbare `NEXT_PUBLIC_*`-waarden (site wiskundemetaaf, www.wiskundemetaaf.nl,
+  de gedeelde Supabase). Een bouwvariabele in Cloudflare gaat daar wel voor.
 * **Secrets:** dezelfde lijst als bij `afgeleide-oefenen`, zie
   [`docs/omgeving.md`](docs/omgeving.md).
 

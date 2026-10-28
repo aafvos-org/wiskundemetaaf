@@ -20,7 +20,7 @@ function runWorkerFirst(bestand: string): string[] {
   return [...match[1].matchAll(/"([^"]+)"/g)].map((m) => m[1])
 }
 
-describe.each(['wrangler.jsonc', 'wrangler.wiskundemetaaf.jsonc'])(
+describe.each(['wrangler.jsonc'])(
   'run_worker_first in %s',
   (bestand) => {
     it('stuurt /nl/inloggen eerst naar de worker (?naar=, ?error=, ?mail=)', () => {
