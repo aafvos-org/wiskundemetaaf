@@ -491,7 +491,7 @@ function bundelZwareWorker(bron) {
   fs.writeFileSync(
     config,
     JSON.stringify({
-      name: 'afgeleide-oefenen',
+      name: 'wiskundemetaaf',
       // Absoluut pad: wrangler zoekt `main` vanaf de map van dit configbestand.
       main: path.resolve(bron),
       compatibility_date: '2026-09-25',

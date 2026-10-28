@@ -27,7 +27,7 @@ let ruw
 try {
   ruw = execFileSync(
     'npx',
-    ['wrangler', 'secret', 'list', '--name', 'afgeleide-oefenen'],
+    ['wrangler', 'secret', 'list', '--name', 'wiskundemetaaf'],
     { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] },
   )
 } catch (err) {

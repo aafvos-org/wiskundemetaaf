@@ -5,11 +5,13 @@
   // startpagina en de teksten zijn anders.
   //
   // Welke van de twee er gebouwd wordt, zegt NEXT_PUBLIC_SITE_VARIANT bij de
-  // bouw (zie src/config/site.ts). Die waarde staat bij de bouwvariabelen van
-  // Workers Builds, niet hier: NEXT_PUBLIC_* wordt tijdens de bouw ingebakken.
+  // bouw (zie src/config/site.ts). Die waarde zet scripts/openbare-bouwwaarden.sh
+  // bij `npm run cf:build`, niet hier: NEXT_PUBLIC_* wordt tijdens de bouw ingebakken.
   //
   // Lokaal bekijken: npm run cf:preview:wiskundemetaaf
   "name": "wiskundemetaaf",
+  // Workers Builds bouwt een pull request met `npx wrangler preview`; dat wil dit blok, ook leeg.
+  "previews": {},
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-09-25",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],

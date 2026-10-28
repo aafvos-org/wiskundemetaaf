@@ -84,7 +84,7 @@ jobs:
           {
             echo "Deze melding is automatisch gemaakt door de workflow **Worker-omgeving**."
             echo
-            echo "Op de Worker \`afgeleide-oefenen\` ontbreekt minstens één verplicht geheim uit \`scripts/worker-omgeving.json\`."
+            echo "Op de Worker \`wiskundemetaaf\` ontbreekt minstens één verplicht geheim uit \`scripts/worker-omgeving.json\`."
             echo "Daardoor kan mail of een andere servertaak stil niets doen."
             echo
             echo "Ontbrekende namen (geen waarden):"
