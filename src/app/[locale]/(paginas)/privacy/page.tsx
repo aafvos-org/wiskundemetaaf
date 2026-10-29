@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 
+import { SITE_CONFIG } from '@/config/site'
 import { canoniek, deelkaart } from '@/lib/seo'
 
 export async function generateMetadata({
@@ -11,7 +12,7 @@ export async function generateMetadata({
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Privacy' })
   const title = t('title')
-  const description = t('description')
+  const description = t('description', { domain: SITE_CONFIG.domain })
   return {
     title,
     description,
@@ -27,10 +28,12 @@ export default async function PrivacyPage() {
     <div className="mx-auto max-w-3xl px-4 py-12">
       <h1 className="font-serif text-4xl text-text">{t('h1')}</h1>
       <p className="mt-3 text-sm text-text-muted">{t('updated')}</p>
-      <p className="mt-6 text-lg leading-relaxed text-text-muted">{t('intro')}</p>
+      <p className="mt-6 text-lg leading-relaxed text-text-muted">
+        {t('intro', { domain: SITE_CONFIG.domain })}
+      </p>
 
       <Sectie titel={t('whoH2')}>
-        <p>{t('whoBody')}</p>
+        <p>{t('whoBody', { domain: SITE_CONFIG.domain })}</p>
       </Sectie>
 
       <Sectie titel={t('whatH2')}>
