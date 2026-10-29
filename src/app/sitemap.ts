@@ -33,6 +33,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
+      url: `${SITE_URL}/${TAAL}/over`,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
       url: `${SITE_URL}/${TAAL}/privacy`,
       changeFrequency: 'yearly',
       priority: 0.3,
