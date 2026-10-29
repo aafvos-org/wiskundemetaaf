@@ -29,8 +29,15 @@ export type SiteInstellingen = {
   /** Tweede deel van de naam in de kop, in de accentkleur. */
   brandAccent: string
   domain: string
+  /** Vult aan op "VWO-leerlingen die leren ___." in de AI-controleprompt. */
   subjectVerbNl: string
-  /** Zin die in AI-prompts de opgave inleidt. */
+  /**
+   * Zin die in AI-prompts een kale som (zonder vraagzin) inleidt, bijvoorbeeld
+   * "Bepaal de afgeleide van f(x) = …". Op wiskundemetaaf.nl staan dezelfde
+   * kale differentieersommen als op afgeleideoefenen.nl (nog niet
+   * opgeschoond), dus blijft dit voor beide gelijk; de echte examenvragen
+   * (migratie 0070) hebben altijd een eigen vraagzin en gebruiken dit niet.
+   */
   taskPromptNl: string
 }
 
@@ -52,7 +59,7 @@ const INSTELLINGEN: Record<SiteVariant, SiteInstellingen> = {
     brandVoor: 'Wiskunde met\u00A0',
     brandAccent: 'Aaf',
     domain: 'wiskundemetaaf.nl',
-    subjectVerbNl: 'differentiëren',
+    subjectVerbNl: 'voor het eindexamen wiskunde B',
     taskPromptNl: 'Bepaal de afgeleide van',
   },
 }
