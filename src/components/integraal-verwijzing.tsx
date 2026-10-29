@@ -1,5 +1,5 @@
 /** Verwijzing naar de zustersite. De query laat zien waar de leerling vandaan komt. */
-export const INTEGRAAL_URL = 'https://integraaloefenen.nl/?van=afgeleideoefenen'
+export const INTEGRAAL_URL = 'https://integraaloefenen.nl/?van=wiskundemetaaf'
 
 export function IntegraalVerwijzing({
   tekst,
