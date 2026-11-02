@@ -1,5 +1,25 @@
 version: 2
 updates:
+  # / (de site zelf): alleen beveiligingsupdates, geen geplande
+  # versie-updates (open-pull-requests-limit: 0, zelfde opzet als mobiel/
+  # hieronder). Welke pakketten nooit automatisch samengevoegd worden staat
+  # in dependabot-samenvoegen.yml (regelboek 4b): next, react, react-dom,
+  # @opennextjs/*, wrangler, katex — die herkent de workflow op naam, dus
+  # ongeacht de map.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+
+  # video/ (Remotion-uitlegvideo's): eigen package-lock.json, dus een eigen
+  # regel. Ook hier alleen beveiligingsupdates.
+  - package-ecosystem: "npm"
+    directory: "/video"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+
   # mobiel/ (de Expo-app, AFG-556): Expo- en React Native-pakketten horen
   # allemaal bij dezelfde Expo-SDK en gaan daarom alleen samen omhoog, nooit
   # los. open-pull-requests-limit: 0 zet geen geplande versie-updates aan —
