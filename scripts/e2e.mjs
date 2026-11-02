@@ -109,6 +109,10 @@ const env = {
   NEXT_PUBLIC_SUPABASE_URL: supabase.API_URL,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: supabase.ANON_KEY,
   SUPABASE_SERVICE_ROLE_KEY: supabase.SERVICE_ROLE_KEY,
+  // Deze repo bouwt altijd als wiskundemetaaf.nl (zie README/AGENTS.md); zonder
+  // dit zou de test tegen de afgeleide-startpagina lopen, die hier nooit
+  // live staat.
+  NEXT_PUBLIC_SITE_VARIANT: 'wiskundemetaaf',
   // Geen echte Gemini in de tests.
   AI_CHECK_MODE: 'stub',
   // En geen echte mail: Resend kijkt zelf naar RESEND_BASE_URL, dus hiermee
