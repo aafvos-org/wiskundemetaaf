@@ -40,10 +40,13 @@ function standUit(mail: Mail, staart: string): 'bevestigd' | 'verlopen' | null {
  * De melding boven het inlogformulier na het klikken op een bevestigingslink.
  *
  * Bij `bevestigd` en `verlopen` wist `/auth/callback` het al: dat stond in de
- * adresregel. Bij `onbekend` zette Supabase het antwoord achter de `#`, en dat
- * stuk stuurt een browser nooit naar de server. Dat gebeurt bij de link uit
- * een opnieuw gestuurde bevestigingsmail. Alleen hier, in de browser, is dan
- * te zien of de link werkte (`access_token`) of op was (`error`).
+ * adresregel. `onbekend` is een overblijfsel van vóór supabase-js 2.108: toen
+ * zette een opnieuw gestuurde bevestigingsmail (`auth.resend`) het antwoord
+ * nog achter de `#`, en dat stuk stuurt een browser nooit naar de server.
+ * Sindsdien gaat ook die mail via dezelfde code-uitwisseling als de eerste
+ * mail, en komt een leerling meteen op zijn eerste som terecht in plaats van
+ * hier. Deze tak blijft staan voor mails die al verstuurd waren vóór die
+ * versiebump.
  */
 export function MailMelding({ mail }: { mail: Mail }) {
   const t = useTranslations('Login')

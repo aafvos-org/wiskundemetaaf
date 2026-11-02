@@ -479,9 +479,17 @@ test('inloggen vóór het bevestigen geeft een duidelijke melding', async ({
     andersDan: eerste.id,
   })
 
-  // Die tweede mail werkt ook echt: erop klikken bevestigt het account.
+  // Die tweede mail werkt ook echt: erop klikken bevestigt het account en
+  // logt je meteen in op je eerste som, net als bij de eerste mail
+  // (supabase-js >= 2.108 stuurt een opnieuw gestuurde mail via dezelfde
+  // code-uitwisseling).
   await page.goto(linkUitMail(opnieuw, VERIFY_PAD))
-  await expect(page.getByText('Je account is bevestigd!')).toBeVisible()
+  await expect(page).toHaveURL(/\/nl\/oefenen\?/)
+  expect(new URL(page.url()).searchParams.get('q')).toBeTruthy()
+
+  // En het account blijft ook daarna gewoon bruikbaar.
+  await sluitRondleiding(page)
+  await logUit(page, email)
   await logIn(page, { email, wachtwoord: WEGWERP_WACHTWOORD })
 })
 
