@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { canoniek, deelkaart, paginaAdres } from '@/lib/seo'
+import { SITE_CONFIG } from '@/config/site'
+import { canoniek, deelkaart, paginaAdres, SITE_URL } from '@/lib/seo'
 import { duurAlsKaartje, getUitlegVideo, getUitlegVideos, uitlegVideoPad } from '@/lib/videos'
 
 import { UitlegVideosInhoud } from '../inhoud'
@@ -48,6 +49,11 @@ export default async function UitlegVideoPage({ params }: PageProps) {
     contentUrl: video.src,
     duration: duurAlsKaartje(video.duration),
     inLanguage: 'nl',
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.brandNaam,
+      url: SITE_URL,
+    },
   }
 
   return (

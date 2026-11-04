@@ -9,6 +9,14 @@
 /** De examenjaren in de keuzelijst, nieuwste eerst. */
 export const EXAMENJAREN = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018] as const
 
+const EXAMENJAREN_OPLOPEND = [...EXAMENJAREN].sort((a, b) => a - b)
+/** Oudste examenjaar in de lijst. Voor antwoord-eerst teksten over het bereik. */
+export const EXAMENJAAR_OUDSTE = EXAMENJAREN_OPLOPEND[0]
+/** Voorlaatste examenjaar in de lijst, bv. voor "2024 en 2025" in een titel. */
+export const EXAMENJAAR_VORIG = EXAMENJAREN_OPLOPEND[EXAMENJAREN_OPLOPEND.length - 2]
+/** Nieuwste examenjaar in de lijst. */
+export const EXAMENJAAR_NIEUWSTE = EXAMENJAREN_OPLOPEND[EXAMENJAREN_OPLOPEND.length - 1]
+
 /** Tijdvak 1, 2 of 3. Tijdvak 3 bestaat sinds 2020. */
 export const TIJDVAKKEN = [1, 2, 3] as const
 

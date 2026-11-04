@@ -12,8 +12,11 @@ import {
   EXAMENTRAINING_ONDERDELEN,
   EXAMENTRAINING_PAD,
   EXAMENTRAINING_TITEL,
+  EXAMENVRAGEN_OEFENEN,
 } from '@/content/theory/examentraining'
+import { SITE_CONFIG } from '@/config/site'
 import { canoniek, deelkaart } from '@/lib/seo'
+import { EXAMENJAAR_NIEUWSTE, EXAMENJAAR_OUDSTE, EXAMENJAAR_VORIG } from '@/lib/video-aanvraag'
 import { YoutubeWelkom } from '@/components/youtube-welkom'
 import { proberenVanOefenen } from '@/lib/practice/proberen'
 
@@ -64,6 +67,22 @@ export default function ExamentrainingPage() {
         </a>
         .
       </p>
+
+      {SITE_CONFIG.variant === 'wiskundemetaaf' && (
+        <p className="mt-3 rounded-xl border border-border bg-surface px-4 py-3 text-text">
+          Dit zijn eigen oefenopgaven in examenstijl. Wil je echte eindexamenvragen uit{' '}
+          {EXAMENJAAR_VORIG} en {EXAMENJAAR_NIEUWSTE}, en de jaren daarvoor (vanaf{' '}
+          {EXAMENJAAR_OUDSTE}), met het antwoord uit het correctievoorschrift? Die vind je ook op
+          deze site, bij{' '}
+          <Link
+            href={EXAMENVRAGEN_OEFENEN}
+            className="font-medium text-accent underline-offset-2 hover:underline"
+          >
+            de eindexamenvragen
+          </Link>
+          .
+        </p>
+      )}
 
       <section className="mt-12">
         <h2 className="font-serif text-2xl text-text">Voor wie</h2>

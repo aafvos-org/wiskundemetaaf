@@ -105,7 +105,7 @@
     "eyebrow": "Eindexamen vwo wiskunde B",
     "h1Start": "Oefen met",
     "h1Accent": "echte examenvragen",
-    "lead": "Vragen uit oude examens, met het antwoord uit het correctievoorschrift en uitleg bij elke stap. Snap je een vraag niet? Dan vraag je er een video bij aan.",
+    "lead": "Vragen uit de examens van {vorig} en {nieuwste}, en de jaren daarvoor (vanaf {oudste}), met het antwoord uit het correctievoorschrift en uitleg bij elke stap. Snap je een vraag niet? Dan vraag je er een video bij aan.",
     "examMoment": "Het centraal examen is op <moment></moment>.",
     "ctaExamenvragen": "Begin met examenvragen",
     "ctaVideoAanvragen": "Vraag een uitlegvideo aan",
@@ -128,7 +128,14 @@
     "accountH2": "Maak een gratis account",
     "accountTekst": "Dan onthoudt de site welke examenvragen je al gemaakt hebt, en waar je nog op vastloopt.",
     "ctaRegistreren": "Registreren",
-    "ctaInloggen": "Inloggen"
+    "ctaInloggen": "Inloggen",
+    "faqH2": "Veelgestelde vragen",
+    "faq1Q": "Waar oefen ik eindexamen wiskunde B {vorig} of {nieuwste}?",
+    "faq1A": "Hier, op wiskundemetaaf.nl: je oefent echte examenvragen uit {vorig} en {nieuwste}, en de jaren daarvoor (vanaf {oudste}), met het antwoord uit het correctievoorschrift en uitleg bij elke stap.",
+    "faq2Q": "Zijn dit echte examenvragen?",
+    "faq2A": "De examenvragen komen letterlijk uit oude centrale examens wiskunde B vwo, met jaar, tijdvak en vraagnummer erbij. De examenstijl-opgaven in hoofdstuk 16 zijn zelfgemaakt, in dezelfde toon als het examen.",
+    "faq3Q": "Kost oefenen wat?",
+    "faq3A": "Nee. Oefenen is gratis. Je maakt een gratis account aan zodat je voortgang bewaard blijft."
   },
   "HoeHetWerkt": {
     "title": "Hoe het werkt",
