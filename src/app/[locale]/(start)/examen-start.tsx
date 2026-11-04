@@ -1,7 +1,9 @@
+import { Suspense } from 'react'
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
 
 import { IntegraalVerwijzing } from '@/components/integraal-verwijzing'
+import { YoutubeWelkom } from '@/components/youtube-welkom'
 import { SITE_CONFIG } from '@/config/site'
 import {
   EXAMENTRAINING_EXAMENBLAD,
@@ -73,6 +75,13 @@ export async function ExamenStart() {
           <p className="mx-auto mt-2 max-w-xl text-lg text-text-muted sm:mt-6">
             {t('lead')}
           </p>
+
+          <Suspense fallback={null}>
+            <YoutubeWelkom
+              ctaHref={EXAMENVRAGEN_OEFENEN}
+              ctaDataMeet="start-youtube-examenvragen"
+            />
+          </Suspense>
 
           <p className="mx-auto mt-4 max-w-xl rounded-xl border border-border bg-surface px-4 py-3 text-sm text-text">
             {t.rich('examMoment', {

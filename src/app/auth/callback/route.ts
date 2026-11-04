@@ -120,15 +120,16 @@ export async function GET(request: NextRequest) {
   // dan wordt de code ingewisseld. Een gekozen soort (`next=/oefenen?…`)
   // komt op die som uit, niet op het hoofdstukkenmenu.
   //
-  // Of het ook gelukt is, zegt Supabase op twee verschillende manieren:
+  // Sinds supabase-js 2.108 ("auth.resend() consistent confirmation flow")
+  // gaat een opnieuw gestuurde mail (`auth.resend`) via dezelfde
+  // code-uitwisseling als de eerste mail: gelukt geeft `?code=…`, mislukt
+  // geeft `?error=…&error_code=otp_expired`. Een leerling die op "Stuur
+  // bevestigingsmail opnieuw" klikt, landt dus net als bij de eerste mail
+  // direct op zijn eerste som, niet op een tussenscherm met "bevestigd".
   //
-  //   * De mail van het registreren is met een code-uitdaging aangevraagd.
-  //     Gelukt geeft `?code=…`, mislukt geeft `?error=…&error_code=otp_expired`.
-  //     Dat staat in de adresregel, dus daar kijken we hieronder naar.
-  //   * Een opnieuw gestuurde mail (`auth.resend`) gaat zonder code-uitdaging.
-  //     Dan zet Supabase het antwoord achter de `#`, en dat stuk stuurt een
-  //     browser nooit naar de server. Daar kan hier dus niets over gezegd
-  //     worden: dat vangt de inlogpagina zelf op (`mail=onbekend`).
+  // Een mail die vóór die versiebump al verstuurd is, zette het antwoord nog
+  // achter de `#`, en dat stuk stuurt een browser nooit naar de server: dat
+  // vangt de inlogpagina zelf op (`mail=onbekend`), zie de afslag hieronder.
   const bevestigen = /^\/nl\/inloggen(\/|$|\?)/.test(next) || oefenpad !== null
   if (bevestigen) {
     if (searchParams.has('error') || searchParams.has('error_code')) {
@@ -159,8 +160,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}${doel}`)
     }
 
-    // Geen code en geen fout: de `#`-staart met het antwoord is niet bij de
-    // server aangekomen. De inlogpagina vangt dat zelf op.
+    // Geen code en geen fout: dit is een mail van vóór supabase-js 2.108, met
+    // het antwoord achter de `#`, en dat stuk stuurt een browser nooit naar
+    // de server. De inlogpagina vangt dat zelf op.
     return inlogMetMail(origin, 'onbekend', oefenpad)
   }
 
