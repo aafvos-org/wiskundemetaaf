@@ -70,7 +70,7 @@ export async function ExamenStart() {
           </p>
           <h1 className="font-serif text-3xl leading-tight text-text sm:text-5xl">
             {t('h1Start')}{' '}
-            <span className="whitespace-nowrap text-accent">{t('h1Accent')}</span>
+            <span className="sm:whitespace-nowrap text-accent">{t('h1Accent')}</span>
           </h1>
           <p className="mx-auto mt-2 max-w-xl text-lg text-text-muted sm:mt-6">
             {t('lead')}
