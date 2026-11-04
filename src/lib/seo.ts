@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { SITE_CONFIG, type SiteVariant } from '@/config/site'
 import { DEELPLAATJE } from '@/lib/deelplaatje'
+import { EXAMENJAAR_NIEUWSTE, EXAMENJAAR_OUDSTE, EXAMENJAAR_VORIG } from '@/lib/video-aanvraag'
 
 /**
  * Het adres waar de site echt staat.
@@ -25,10 +26,9 @@ const START_TEKST = {
     paginaTitel: 'Differentiëren oefenen — afgeleide wiskunde B VWO',
   },
   wiskundemetaaf: {
-    titel: 'Eindexamen vwo wiskunde B oefenen met echte examenvragen en uitleg',
-    tekst:
-      'Eindexamen vwo wiskunde B oefenen met echte examenvragen en uitleg. Je ziet wanneer het examen is, oefent vragen uit oude examens en vraagt zelf een uitlegvideo aan bij de vraag die je niet snapt.',
-    paginaTitel: 'Eindexamen vwo wiskunde B oefenen met echte examenvragen en uitleg',
+    titel: `Eindexamen vwo wiskunde B ${EXAMENJAAR_VORIG} en ${EXAMENJAAR_NIEUWSTE} oefenen met echte examenvragen`,
+    tekst: `Oefen eindexamenvragen vwo wiskunde B van ${EXAMENJAAR_VORIG}, ${EXAMENJAAR_NIEUWSTE} en de jaren daarvoor (vanaf ${EXAMENJAAR_OUDSTE}), met het antwoord uit het correctievoorschrift en uitleg bij elke stap. Je ziet wanneer het volgende examen is en vraagt zelf een uitlegvideo aan bij de vraag die je niet snapt.`,
+    paginaTitel: `Eindexamen vwo wiskunde B ${EXAMENJAAR_VORIG} en ${EXAMENJAAR_NIEUWSTE} oefenen met echte examenvragen`,
   },
 } as const satisfies Record<SiteVariant, { titel: string; tekst: string; paginaTitel: string }>
 

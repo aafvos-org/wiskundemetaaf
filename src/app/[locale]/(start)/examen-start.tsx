@@ -14,6 +14,7 @@ import {
   EXAMENVRAGEN_OEFENEN,
 } from '@/content/theory/examentraining'
 import { DEEL_TEKST_START, SITE_URL } from '@/lib/seo'
+import { EXAMENJAAR_NIEUWSTE, EXAMENJAAR_OUDSTE, EXAMENJAAR_VORIG } from '@/lib/video-aanvraag'
 import { getUitlegVideos, uitlegVideoPad } from '@/lib/videos'
 
 /** Naar afgeleideoefenen.nl, met een merkje waar de bezoeker vandaan komt. */
@@ -32,6 +33,18 @@ export async function ExamenStart() {
   const videos = getUitlegVideos()
     .filter((v) => v.soort === 'vraaguitwerking')
     .slice(0, 6)
+
+  const jaartallen = {
+    vorig: EXAMENJAAR_VORIG,
+    nieuwste: EXAMENJAAR_NIEUWSTE,
+    oudste: EXAMENJAAR_OUDSTE,
+  }
+
+  const FAQ_ITEMS = [
+    { question: t('faq1Q', jaartallen), answer: t('faq1A', jaartallen) },
+    { question: t('faq2Q'), answer: t('faq2A') },
+    { question: t('faq3Q'), answer: t('faq3A') },
+  ]
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -53,6 +66,15 @@ export async function ExamenStart() {
         inLanguage: 'nl',
         learningResourceType: 'lessite',
       },
+      {
+        '@type': 'FAQPage',
+        '@id': `${SITE_URL}#faq`,
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
+      },
     ],
   }
 
@@ -73,7 +95,7 @@ export async function ExamenStart() {
             <span className="whitespace-nowrap text-accent">{t('h1Accent')}</span>
           </h1>
           <p className="mx-auto mt-2 max-w-xl text-lg text-text-muted sm:mt-6">
-            {t('lead')}
+            {t('lead', jaartallen)}
           </p>
 
           <Suspense fallback={null}>
@@ -235,6 +257,23 @@ export async function ExamenStart() {
               />
             </li>
           </ul>
+        </section>
+
+        <section className="mt-14">
+          <h2 className="font-serif text-2xl text-text sm:text-3xl">{t('faqH2')}</h2>
+          <div className="mt-6 space-y-3">
+            {FAQ_ITEMS.map((item) => (
+              <details
+                key={item.question}
+                className="group rounded-xl border border-border bg-surface p-4 open:bg-surface-2"
+              >
+                <summary data-meet="start-faq" className="cursor-pointer font-medium text-text">
+                  {item.question}
+                </summary>
+                <p className="mt-2 text-sm text-text-muted">{item.answer}</p>
+              </details>
+            ))}
+          </div>
         </section>
 
         <section className="mt-14 text-center">
