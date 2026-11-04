@@ -1,15 +1,28 @@
 import { ImageResponse } from 'next/og'
 
+import { SITE_CONFIG, type SiteVariant } from '@/config/site'
+
 export const DEELPLAATJE = { width: 1200, height: 630 }
+
+/**
+ * Letters in het logoblokje en de regel onder de titel, per site. Dit staat
+ * los van `SITE_CONFIG` omdat het alleen hier gebruikt wordt — net als
+ * `START_TEKST` in `src/lib/seo.ts`.
+ */
+export const DEELPLAATJE_MERK = {
+  afgeleide: { letters: 'AO', tagline: 'Wiskunde B · differentiëren oefenen' },
+  wiskundemetaaf: { letters: 'WA', tagline: 'Wiskunde B · eindexamen oefenen' },
+} as const satisfies Record<SiteVariant, { letters: string; tagline: string }>
 
 /** Kort genoeg voor het plaatje, zonder rare tekens uit het adres. */
 export function veiligeDeeltitel(ruw: string | null): string {
   const tekst = (ruw ?? '').replace(/\s+/g, ' ').trim().slice(0, 80)
-  return tekst || 'Afgeleide oefenen'
+  return tekst || SITE_CONFIG.brandNaam
 }
 
 /** Het plaatje dat WhatsApp bij een gedeelde link toont: titel en het logo. */
 export function maakDeelplaatje(titel: string) {
+  const { letters, tagline } = DEELPLAATJE_MERK[SITE_CONFIG.variant]
   return new ImageResponse(
     (
       <div
@@ -38,9 +51,9 @@ export function maakDeelplaatje(titel: string) {
               fontFamily: 'Georgia, serif',
             }}
           >
-            AO
+            {letters}
           </div>
-          <div style={{ fontSize: 32, letterSpacing: 1 }}>afgeleideoefenen.nl</div>
+          <div style={{ fontSize: 32, letterSpacing: 1 }}>{SITE_CONFIG.domain}</div>
         </div>
         <div
           style={{
@@ -52,7 +65,7 @@ export function maakDeelplaatje(titel: string) {
         >
           {titel}
         </div>
-        <div style={{ fontSize: 28, opacity: 0.85 }}>Wiskunde B · differentiëren oefenen</div>
+        <div style={{ fontSize: 28, opacity: 0.85 }}>{tagline}</div>
       </div>
     ),
     { ...DEELPLAATJE },
