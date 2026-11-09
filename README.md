@@ -460,24 +460,35 @@ Deployen met `wrangler` of `opennextjs-cloudflare deploy` doe je niet.
 
 ### Wat er op de echte site al staat
 
+Twee werelden: de **Worker** (`afgeleide-oefenen` of `wiskundemetaaf`, zie
+[Twee sites uit deze repo](#twee-sites-uit-deze-repo)) heeft zijn eigen
+bouwvariabelen en secrets, maar beide Workers delen **hetzelfde
+Supabase-project** — daar is maar één instelling, niet een per site.
+
 - **Omgevingsvariabelen** horen bij de bouwvariabelen van Workers Builds
-  (waaronder alles wat met `NEXT_PUBLIC_` begint) en als Worker-secrets. Niet
-  in git.
+  (waaronder alles wat met `NEXT_PUBLIC_` begint) en als Worker-secrets. Per
+  Worker apart, niet in git. Zie [`docs/omgeving.md`](docs/omgeving.md) voor de
+  volledige lijst.
 - **Aanmelden met Google:** de knop staat uit tot `NEXT_PUBLIC_GOOGLE_LOGIN=1`
-  bij de bouwvariabelen staat én Google als provider in Supabase aan staat.
-  Zonder die twee blijft inloggen met e-mail en wachtwoord zoals het was.
+  bij de bouwvariabelen van die Worker staat én Google als provider in
+  Supabase aan staat. Zonder die twee blijft inloggen met e-mail en wachtwoord
+  zoals het was.
 - **Bezoekersteller:** `NEXT_PUBLIC_CF_BEACON_TOKEN` is het publieke token van
-  Cloudflare Web Analytics. Leeg of weg: de site laadt geen tellerscript.
-  Omdat de naam met `NEXT_PUBLIC_` begint, moet hij bij de bouwvariabelen
-  staan.
-- **Supabase Auth:** site-URL `https://www.afgeleideoefenen.nl`, en bij
-  Redirect URLs de adressen uit `[remotes.productie.auth]` in
-  `supabase/config.toml`, inclusief de voorbeeldversies op `workers.dev`.
-- **SMTP** in Supabase: Authentication → Emails → SMTP Settings, met Resend.
-  Zonder die stap laat Supabase maar een paar bevestigingsmails per uur door
-  — zie [Mail gaat langs twee wegen](#mail-gaat-langs-twee-wegen).
-- **Database:** de bestanden in `supabase/migrations/`, op bestandsnaam.
-  `seed.sql` hoort alleen op de lokale testdatabase.
+  Cloudflare Web Analytics, eigen aan de Worker. Leeg of weg: de site laadt
+  geen tellerscript. Omdat de naam met `NEXT_PUBLIC_` begint, moet hij bij de
+  bouwvariabelen van die Worker staan.
+- **Supabase Auth** (één instelling voor beide Workers): site-URL
+  `https://www.afgeleideoefenen.nl` — dat blijft zo, ook voor wiskundemetaaf.nl,
+  zie `[remotes.productie.auth]` in `supabase/config.toml`. Bij Redirect URLs
+  staan de adressen van **beide** sites (`additional_redirect_urls` in
+  datzelfde blok), inclusief de voorbeeldversies op `workers.dev`. Zet hier dus
+  nooit `www.wiskundemetaaf.nl` als site-URL: dat breekt de mail-links van
+  afgeleideoefenen.nl.
+- **SMTP** in Supabase (gedeeld): Authentication → Emails → SMTP Settings, met
+  Resend. Zonder die stap laat Supabase maar een paar bevestigingsmails per
+  uur door — zie [Mail gaat langs twee wegen](#mail-gaat-langs-twee-wegen).
+- **Database** (gedeeld): de bestanden in `supabase/migrations/`, op
+  bestandsnaam. `seed.sql` hoort alleen op de lokale testdatabase.
 
 ### SEO & vindbaarheid
 
