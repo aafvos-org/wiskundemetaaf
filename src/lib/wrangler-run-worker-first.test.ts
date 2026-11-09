@@ -4,12 +4,13 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 /**
- * Cloudflare geeft een klaargezet bestand dat op het pad past altijd
- * rechtstreeks terug, los van een zoekopdracht of sessiekoekje — de worker
- * draait dan niet, en de uitzonderingen in src/lib/startpagina-snel.ts
- * (anoniemeInloggenPagina, anoniemeUitlegVideosPagina) hebben dan geen
- * effect (AFG-632, AFG-635). Een pad met een zoekopdracht die de server
- * iets anders moet laten doen, hoort daarom in run_worker_first.
+ * Zonder run_worker_first zou OpenNext's eigen asset-resolver een klaargezet
+ * bestand dat op het pad past zelf teruggeven zodra de worker draait, los
+ * van een zoekopdracht of sessiekoekje — de uitzonderingen in
+ * src/lib/startpagina-snel.ts (anoniemeInloggenPagina,
+ * anoniemeUitlegVideosPagina) zouden dan geen effect hebben (AFG-632,
+ * AFG-635). Een pad met een zoekopdracht die de server iets anders moet
+ * laten doen, hoort daarom in run_worker_first.
  */
 function runWorkerFirst(bestand: string): string[] {
   const tekst = fs.readFileSync(path.join(process.cwd(), bestand), 'utf8')
