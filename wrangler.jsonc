@@ -18,8 +18,14 @@
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
-    // /nl geeft het klaargezette bestand, zonder eerst door te sturen naar /nl/.
-    "html_handling": "drop-trailing-slash",
+    // @opennextjs/cloudflare 1.20.16 eist "none" zodra run_worker_first
+    // aanstaat: met "drop-trailing-slash" zou een alias-pad (bijv. een
+    // bestandsnaam met punt) de worker kunnen omzeilen en zo de sessiecheck
+    // van /inloggen en /registreren overslaan. Next.js/OpenNext serveert
+    // klaargezette pagina's altijd op hun eigen pad (zie startpagina-snel.ts),
+    // dus dit raakt niet de manier waarop /nl en andere klaargezette
+    // pagina's worden getoond.
+    "html_handling": "none",
     // Zie wrangler.jsonc voor de uitleg: /inloggen, /registreren en
     // /uitleg-videos moeten, anders dan de andere klaargezette pagina's,
     // eerst naar de worker voor een zoekopdracht (`?naar=` resp. `?van=`
