@@ -17,6 +17,9 @@ const ZONDER_TAALCODE = [
   'sitemap.xml',
   'llms.txt',
   'og',
+  // De IndexNow-sleutel (zie scripts/indexnow.mjs): moet op de hoofdnaam
+  // staan, want daar controleert IndexNow hem.
+  'e5505c804fc785d9dc468a8bda28ca93.txt',
 ]
 
 // Openbare pagina's met voor iedereen dezelfde inhoud. Next geeft elke
