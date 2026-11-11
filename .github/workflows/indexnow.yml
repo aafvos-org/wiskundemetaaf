@@ -1,0 +1,46 @@
+# Meldt de openbare pagina's bij IndexNow (Bing, en via Bing ook Copilot en
+# ChatGPT-zoeken) na elke merge naar `main`. Een merge op `main` is meteen
+# live (Cloudflare Workers Builds), dus dat is het goede moment om te melden.
+#
+# Geen geheimen nodig: de IndexNow-sleutel staat bewust publiek in
+# `scripts/indexnow.mjs` en `public/`, zie de uitleg daar.
+#
+# Faalt dit (bijvoorbeeld omdat de Cloudflare-bouw na de merge nog niet
+# klaar is), dan is dat geen reden om de merge zelf rood te laten zien: deze
+# workflow meldt dat met een waarschuwing, niet met een rode build.
+name: IndexNow
+
+on:
+  push:
+    branches: [main]
+  # Met de hand opnieuw proberen:
+  #   gh workflow run indexnow.yml --ref main
+  workflow_dispatch:
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  melden:
+    name: Pagina's melden bij IndexNow
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Even wachten tot de nieuwe bouw live staat
+        run: sleep 60
+
+      - name: Melden
+        run: |
+          if ! node scripts/indexnow.mjs; then
+            echo "::warning::IndexNow-melding is niet gelukt. Zie de uitvoer hierboven."
+          fi
