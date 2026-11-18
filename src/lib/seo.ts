@@ -26,9 +26,9 @@ const START_TEKST = {
     paginaTitel: 'Differentiëren oefenen — afgeleide wiskunde B VWO',
   },
   wiskundemetaaf: {
-    titel: `Eindexamen vwo wiskunde B ${EXAMENJAAR_VORIG} en ${EXAMENJAAR_NIEUWSTE} oefenen met echte examenvragen`,
+    titel: `Eindexamen wiskunde B ${EXAMENJAAR_VORIG} en ${EXAMENJAAR_NIEUWSTE} oefenen: elke vraag met uitleg`,
     tekst: `Oefen eindexamenvragen vwo wiskunde B van ${EXAMENJAAR_VORIG}, ${EXAMENJAAR_NIEUWSTE} en de jaren daarvoor (vanaf ${EXAMENJAAR_OUDSTE}), met het antwoord uit het correctievoorschrift en uitleg bij elke stap. Je ziet wanneer het volgende examen is en vraagt zelf een uitlegvideo aan bij de vraag die je niet snapt.`,
-    paginaTitel: `Eindexamen vwo wiskunde B ${EXAMENJAAR_VORIG} en ${EXAMENJAAR_NIEUWSTE} oefenen met echte examenvragen`,
+    paginaTitel: `Eindexamen wiskunde B ${EXAMENJAAR_VORIG} en ${EXAMENJAAR_NIEUWSTE} oefenen: elke vraag met uitleg`,
   },
 } as const satisfies Record<SiteVariant, { titel: string; tekst: string; paginaTitel: string }>
 
