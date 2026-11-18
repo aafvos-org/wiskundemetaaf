@@ -42,6 +42,7 @@ export async function ExamenStart() {
 
   const FAQ_ITEMS = [
     { question: t('faq1Q', jaartallen), answer: t('faq1A', jaartallen) },
+    { question: t('faq4Q', jaartallen), answer: t('faq4A', jaartallen) },
     { question: t('faq2Q'), answer: t('faq2A') },
     { question: t('faq3Q'), answer: t('faq3A') },
   ]
